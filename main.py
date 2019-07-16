@@ -1,5 +1,4 @@
 import discord
-import os
 import emojis
 
 #variables
@@ -24,6 +23,8 @@ poll_error = discord.Embed(description="It seems like there was an error process
 invite_link = 'https://discordapp.com/api/oauth2/authorize?client_id=579350634000678922&permissions=85056&scope=bot'
 
 #function definitions
+#def print_help():
+
 #function to parse message from user to create post off of
 def parse_poll(message):
     poll = message.content.split('"')
@@ -57,7 +58,9 @@ def parse_poll(message):
 @client.event
 async def on_ready():
     global creator
-    creator = client.get_user(int(os.environ.get("CREATOR_ID")))
+    #grabs user id from file "creator_id.txt"
+    with open("creator_id.txt") as f_obj:
+        creator = client.get_user(int(f_obj.read().rstrip()))
     await client.change_presence(activity=helpme)
     print("I'm ready!")
     print(client.user)
@@ -65,7 +68,6 @@ async def on_ready():
     print(discord.__version__)
     print(creator)
 
-#actions off of messages: elif structure to parse what and when to do something
 @client.event
 async def on_message(message):
     global poll
@@ -87,6 +89,8 @@ async def on_message(message):
     if message.author == client.user and message.content.startswith('**:bar_chart:'):
         for emoji in poll[2]:
             await message.add_reaction(emoji)
-
-token = os.environ.get("BOT_TOKEN")
+            
+#grabs bot token from file "bot_token.txt"
+with open("bot_token.txt") as f_obj:
+    token = f_obj.read().rstrip()
 client.run(token)
